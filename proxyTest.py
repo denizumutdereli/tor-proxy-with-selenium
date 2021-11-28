@@ -1,21 +1,22 @@
-import os
 import json, time, requests
 from stem import Signal
 from urllib.request import urlopen
 from stem.control import Controller
+#tor --service install -options ControlPort 9051
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+import os
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from time import sleep
 
 #tor --service install -options ControlPort 9051
-from selenium import webdriver
 
 proxies = {
     'http': 'socks5://localhost:9050', 'https': 'socks5://localhost:9050'
@@ -35,13 +36,16 @@ class Connection:
         self.options.add_argument('--log-level=3')
     
         torexe = os.popen(r'C:\CHANGE HERE\Tor Browser\Browser\TorBrowser\Tor')
-        profile = FirefoxProfile(r'C:\CHANGE HERE\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default')
-        profile.set_preference('network.proxy.type', 1)
-        profile.set_preference('network.proxy.socks', '127.0.0.1')
-        profile.set_preference('network.proxy.socks_port', 9050) #9051 up to you
-        profile.set_preference("network.proxy.socks_remote_dns", False)
-        profile.update_preferences()
-        self._driver = webdriver.Firefox(firefox_profile= profile, executable_path=r'geckodriver.exe')
+        profile_path  = (r'C:\CHANGE HERE\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default')
+        self.options.set_preference('profile', profile_path)
+        
+        self.options.set_preference('network.proxy.type', 1)
+        self.options.set_preference('network.proxy.socks', '127.0.0.1')
+        self.options.set_preference('network.proxy.socks_port', 9050)
+        self.options.set_preference('network.proxy.socks_remote_dns', False)
+
+        service = Service('geckodriver.exe')
+        self._driver = webdriver.Firefox(service=service, options=self.options)
 
         self._load()
 
