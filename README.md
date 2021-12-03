@@ -1,4 +1,4 @@
-# torproxy
+# Using Selenium with Tor Proxy Features
 A basic connection type of how to use Tor proxy + Selenium
 
 Download Tor Browser to your OS and then find the Tor.exe
